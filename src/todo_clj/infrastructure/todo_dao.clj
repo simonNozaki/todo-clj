@@ -14,14 +14,14 @@
 
 (defprotocol SearchTodoDao
   "TODO検索サービス"
-  (find-by-user [user-id] "ユーザIDでTODOを絞る")
+  (find-by-user [this user-id] "ユーザIDでTODOを絞る")
   (find-all [this] "すべてのTODOを返す"))
 
 (defrecord InMemorySearchTodoDao []
   SearchTodoDao
   (find-all [this]
     (set/join todos users/users {:user-id :id}))
-  (find-by-user [user-id]
+  (find-by-user [this user-id]
     (let [todo-with-users (set/join todos users/users {:user-id :id})]
       (set/select #(= (:user-id) user-id) todo-with-users))))
 

@@ -2,6 +2,7 @@
   (:require [ring.adapter.jetty :as server]
             [ring.util.response :as response]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
+            [ring.middleware.params :as params]
             [compojure.core :refer :all]
             [compojure.route :as route])
   (:use [todo-clj.infrastructure.todo-dao]))
@@ -10,9 +11,13 @@
 
 (defn get-handler [req]
   "POSTリクエストのメソッドハンドラ"
-  (println req)
+  (println (apply str "リクエスト => " (params/assoc-query-params req "utf-8")))
   (let [search-todo (->InMemorySearchTodoDao)
-        response (response/response (find-all search-todo))]
+        ; クエリパラメータの解析、配列 in 配列の形式
+        ; [[id 1] [size 1]]
+        query-parameters (:params (params/assoc-query-params req "utf-8"))
+        user-id (last (first query-parameters))
+        response (response/response (find-by-user search-todo user-id))]
     (response/content-type response "application/json")))
 
 (defn post-handler [req]
