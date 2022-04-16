@@ -22,6 +22,6 @@
   (find-all [this]
     (set/join todos users/users {:user-id :id}))
   (find-by-user [this user-id]
+    (println "ユーザID => " user-id)
     (let [todo-with-users (set/join todos users/users {:user-id :id})]
-      (set/select #(= (:user-id) user-id) todo-with-users))))
-
+      (set/select (fn [todo] (= (:user-id todo) user-id)) todo-with-users))))

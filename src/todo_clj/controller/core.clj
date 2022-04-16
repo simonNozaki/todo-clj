@@ -12,17 +12,19 @@
 (defn get-handler [req]
   "POSTリクエストのメソッドハンドラ"
   (println (apply str "リクエスト => " (params/assoc-query-params req "utf-8")))
-  (let [search-todo (->InMemorySearchTodoDao)
-        ; クエリパラメータの解析、配列 in 配列の形式
+  (let [; クエリパラメータの解析、配列 in 配列の形式
         ; [[id 1] [size 1]]
         query-parameters (:params (params/assoc-query-params req "utf-8"))
         user-id (last (first query-parameters))
-        response (response/response (find-by-user search-todo user-id))]
+        result (if (nil? user-id)
+                 (find-all (->InMemorySearchTodoDao))
+                 (find-by-user (->InMemorySearchTodoDao) user-id))
+        response (response/response result)]
+    (println "レスポンス => " response)
     (response/content-type response "application/json")))
 
 (defn post-handler [req]
   "POSTリクエストのメソッドハンドラ"
-  (println (apply str "リクエスト => " (:body req)))
   (let [body (get-in req [:body "name"] "指定されていません")
         response (response/response {:message (apply str "Hello" body)})]
     (response/content-type response "application/json")))
@@ -33,8 +35,8 @@
 
 (defroutes app-routes
            "ルーティング"
-           (GET "/" req (handle-request get-handler))
-           (POST "/" req (handle-request post-handler)))
+           (GET "/todo" req (handle-request get-handler))
+           (POST "/todo" req (handle-request post-handler)))
 
 (defn start-server []
   "サーバの起動"
