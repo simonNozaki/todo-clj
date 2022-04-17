@@ -1,16 +1,19 @@
 (ns todo-clj.infrastructure.todo-dao
-  (:import (java.util Date))
   (:use [todo-clj.infrastructure.user-dao :as users]
-        [clojure.set :as set]))
+        [clojure.set :as set]
+        [todo-clj.domain.todo]
+        [todo-clj.domain.id]
+        [todo-clj.domain.user]))
 
 (def todos
   "todoセット"
-  (let [now (Date.)]
-  #{{:id 1 :user-id 1 :title "相談する" :created-at now}
-    {:id 2 :user-id 1 :title "会議資料作成" :created-at now}
-    {:id 3 :user-id 1 :title "コードレビュー" :created-at now}
-    {:id 4 :user-id 1 :title "仕様の検討" :created-at now}
-    {:id 5 :user-id 2 :title "メールの返信" :created-at now}}))
+  (let [bezos (->User (create-id 1) "Jeff Besoz")
+        dissny (->User (create-id 2) "Walt Dissny")]
+  #{(create-todo (create-id 1) "相談する" bezos (create-todo-state "UNPROCESSED"))
+    (create-todo (create-id 2) "会議資料作成" bezos (create-todo-state "DONE"))
+    (create-todo (create-id 3) "コードレビュー" dissny (create-todo-state "IN PROGRESS"))
+    (create-todo (create-id 4) "仕様の検討" dissny (create-todo-state "IN PROGRESS"))
+    (create-todo (create-id 5) "メール送信" dissny (create-todo-state "GONE"))}))
 
 (defprotocol SearchTodoDao
   "TODO検索サービス"
@@ -20,8 +23,9 @@
 (defrecord InMemorySearchTodoDao []
   SearchTodoDao
   (find-all [this]
-    (set/join todos users/users {:user-id :id}))
+    todos)
   (find-by-user [this user-id]
+    ; IDが入力されてなければ空の結果
+    (when (nil? user-id) #{})
     (println "ユーザID => " user-id)
-    (let [todo-with-users (set/join todos users/users {:user-id :id})]
-      (set/select (fn [todo] (= (:user-id todo) user-id)) todo-with-users))))
+    (set/select (fn [todo] (= (:value (:id (:user todo))) 1)) todos)))
