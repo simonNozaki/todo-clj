@@ -1,6 +1,5 @@
 (ns todo-clj.infrastructure.todo-dao
-  (:use [todo-clj.infrastructure.user-dao :as users]
-        [clojure.set :as set]
+  (:use [clojure.set :as set]
         [todo-clj.domain.todo]
         [todo-clj.domain.id]
         [todo-clj.domain.user]))
