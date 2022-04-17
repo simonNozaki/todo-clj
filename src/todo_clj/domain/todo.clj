@@ -5,11 +5,11 @@
 (defrecord TodoState [value])
 
 ; TODO状態コンストラクタ
-(defn create-todo-state [value]
-  (let [state (if (contains? ["UNPROCESSED" "IN PROGRESS" "DONE" "GONE"] value)
-                value
-                "UNPROCESSED")]
-    (->TodoState state)))
+(defn create-todo-state
+  ([] (create-todo-state "UNPROCESSED"))
+  ([value] (let [states #{"UNPROCESSED" "IN-PROGRESS" "DONE" "GONE"}
+                 state (if (contains? states value) value "UNPROCESSED")]
+    (->TodoState state))))
 
 (defrecord Todo [id title user state created-at])
 
