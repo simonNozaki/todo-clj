@@ -13,8 +13,8 @@
 
 (defroutes app-routes
            "ルーティング"
-           (GET "/todo" req (handle-request get-handler))
-           (POST "/todo" req (handle-request post-handler)))
+           (GET "/todo" req (handle-request get-todo-handler))
+           (POST "/todo" req (handle-request save-todo-handler)))
 
 (defn start-server []
   "サーバの起動"
