@@ -12,7 +12,7 @@
                 :created-at (:created-at r)})
        result))
 
-(defn get-handler [req]
+(defn get-todo-handler [req]
   "GETリクエストのメソッドハンドラ"
   (println (apply str "リクエスト => " (params/assoc-query-params req "utf-8")))
   (let [; クエリパラメータの解析、配列 in 配列の形式
@@ -20,19 +20,20 @@
         query-parameters (:params (params/assoc-query-params req "utf-8"))
         user-id (last (first query-parameters))
         result (if (nil? user-id)
-                 (find-all (->InMemorySearchTodoDao))
-                 (find-by-user (->InMemorySearchTodoDao) user-id))
+                 (find-all (->InMemoryTodoDao))
+                 (find-by-user (->InMemoryTodoDao) user-id))
         response (response/response (to-response result))]
     (println "レスポンス => " response)
     (response/content-type response "application/json")))
 
 (defn to-request-body [req-body]
   "リクエストからマップに変換する"
-  {:title (get-in req-body [:body "title"])
-   :user-id (get-in req-body [:body "id"])})
+  {:title (get-in req-body [:body "title"] "")
+   :user-id (get-in req-body [:body "id"]) ""})
 
-(defn post-handler [req]
+(defn save-todo-handler [req]
   "POSTリクエストのメソッドハンドラ"
   (let [body (to-request-body (:body req))
+        result (save (->InMemoryTodoDao) body)
         response (response/response {:message (apply str "Hello" body)})]
     (response/content-type response "application/json")))
