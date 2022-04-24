@@ -1,8 +1,8 @@
 (ns todo-clj.infrastructure.todo-dao-test
   (:use [clojure.test])
   (:use [todo-clj.infrastructure.todo-dao]
-        [todo-clj.application.functions])
-  (:require [clojure.set :as set]))
+        [todo-clj.application.functions]
+        [todo-clj.domain.id]))
 
 (deftest todo-dao-find-all-test
   (testing "結果を取得できる"
@@ -19,5 +19,13 @@
   (testing "レコードを登録できる"
     (is (let [req {:title "テスト登録" :user-id 1}
               result (save (->InMemoryTodoDao) req)]
+          (println result)
           (present? result)
-          (present? (set/select (fn [r] (= (:title r) "テスト登録")) result))))))
+          (= (:title result) "テスト登録")
+          (= (:user result) "Jeff Besoz")
+          (= (:value (:state result) "UNPROCESSED")))))
+  (testing "所有者がまだ存在しない"
+    (is (let [req {:title "存在しないユーザ" :user-id 3}
+              result (save (->InMemoryTodoDao) req)]
+          (println result)
+          (nil? result)))))

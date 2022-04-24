@@ -3,14 +3,17 @@
             [ring.middleware.params :as params])
   (:use [todo-clj.infrastructure.todo-dao]))
 
+(defn from-todo [elm]
+  "単一のTODOオブジェクトを平坦なオブジェクトにする"
+  {:id (:value (:id elm))
+   :title (:title elm)
+   :user (:name (:user elm))
+   :state (:value (:state elm))
+   :created-at (:created-at elm)})
+
 (defn to-response [result]
   "検索結果をハンドラのレスポンスに変換"
-  (map (fn [r] {:id (:value (:id r))
-                :title (:title r)
-                :user (:name (:user r))
-                :state (:value (:state r))
-                :created-at (:created-at r)})
-       result))
+  (map from-todo result))
 
 (defn get-todo-handler [req]
   "GETリクエストのメソッドハンドラ"
@@ -29,11 +32,15 @@
 (defn to-request-body [req-body]
   "リクエストからマップに変換する"
   {:title (get-in req-body [:body "title"] "")
-   :user-id (get-in req-body [:body "id"]) ""})
+   :user-id (get-in req-body [:body "user-id"] "")})
 
 (defn save-todo-handler [req]
   "POSTリクエストのメソッドハンドラ"
-  (let [body (to-request-body (:body req))
+  (let [request-body {:title (get-in req [:body "title"] "")
+                      :user-id (get-in req [:body "user-id"] "")}
+        body (to-request-body (:body req))
         result (save (->InMemoryTodoDao) body)
-        response (response/response {:message (apply str "Hello" body)})]
+        response-body (from-todo result)
+        response (response/response response-body)]
+    (println str "リクエスト =>" request-body)
     (response/content-type response "application/json")))

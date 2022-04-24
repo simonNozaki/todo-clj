@@ -24,8 +24,11 @@
   TodoDao
   (save [this todo]
     (let [id (create-id)
+          user-id (:user-id todo)
           ; todoの集合に入っているユーザのみ抜き出し
-          maybe-user (get (filter (fn [elm] (= (:value (:id (:user elm)))) (:user-id todo)) todos) 0)
+          maybe-user (first (set/select (fn [elm]
+                                          (let [user-id-value (:value (:id (:user elm)))]
+                                            (= user-id-value user-id))) todos))
           user (if (nil? maybe-user)
                  (->User (create-id) "Anonymous")
                  maybe-user)
@@ -34,8 +37,10 @@
                    (:title todo)
                    user
                    (create-todo-state))]
-      (println str "レコードの追加 =>" record)
-      (conj todos record)))
+      (println maybe-user)
+      (if (nil? maybe-user)
+        (println "TODOの所有者がいません")
+        record)))
   (find-all [this]
     todos)
   (find-by-user [this user-id]
