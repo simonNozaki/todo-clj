@@ -6,5 +6,6 @@
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [ring "1.9.5"]
                  [ring/ring-json "0.5.1"]
+                 [ring-logger "1.1.1"]
                  [compojure "1.6.2"]]
   :repl-options {:init-ns todo-clj.core})

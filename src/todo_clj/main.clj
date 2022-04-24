@@ -1,6 +1,9 @@
 (ns todo-clj.main
   (:use [ring.adapter.jetty :as server]
         [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
+        [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+        [ring.middleware.params :refer [wrap-params]]
+        [ring.logger :as logger]
         [compojure.core :refer :all]
         [compojure.route]
         [todo-clj.presentation.controller]))
@@ -8,8 +11,13 @@
 (defonce server (atom nil))
 
 (defn handle-request [handler]
-  "ハンドラのJSONレスポンスラッパ、リクエスト・レスポンスをマップ・JSONに変換する"
-  (wrap-json-body (wrap-json-response handler) handler {:keywords? true}))
+  (-> handler
+      logger/wrap-log-response
+      logger/wrap-log-request-start
+      wrap-keyword-params
+      wrap-params
+      wrap-json-response
+      wrap-json-body))
 
 (defroutes app-routes
            "ルーティング"
