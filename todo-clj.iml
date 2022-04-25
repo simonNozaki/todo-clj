@@ -40,12 +40,14 @@
     <orderEntry type="library" name="Leiningen: org.clojure/core.specs.alpha:0.2.56" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/java.classpath:0.3.0" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/spec.alpha:0.2.194" level="project" />
+    <orderEntry type="library" name="Leiningen: org.clojure/tools.logging:1.2.3" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.macro:0.1.5" level="project" />
     <orderEntry type="library" name="Leiningen: org.clojure/tools.namespace:0.2.11" level="project" />
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-http:9.4.44.v20210927" level="project" />
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-io:9.4.44.v20210927" level="project" />
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-server:9.4.44.v20210927" level="project" />
     <orderEntry type="library" name="Leiningen: org.eclipse.jetty/jetty-util:9.4.44.v20210927" level="project" />
+    <orderEntry type="library" name="Leiningen: ring-logger:1.1.1" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-codec:1.1.2" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-core:1.9.5" level="project" />
     <orderEntry type="library" name="Leiningen: ring/ring-devel:1.9.5" level="project" />
