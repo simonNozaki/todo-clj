@@ -6,7 +6,8 @@
         [ring.logger :as logger]
         [compojure.core :refer :all]
         [compojure.route]
-        [todo-clj.presentation.controller]))
+        [todo-clj.presentation.controller]
+        [todo-clj.application.middleware.exception-handler]))
 
 (defonce server (atom nil))
 
@@ -17,7 +18,8 @@
       wrap-keyword-params
       wrap-params
       wrap-json-response
-      wrap-json-body))
+      wrap-json-body
+      wrap-handler-error))
 
 (defroutes app-routes
            "ルーティング"
