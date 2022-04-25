@@ -23,8 +23,8 @@
         query-parameters (:params (params/assoc-query-params req "utf-8"))
         user-id (last (first query-parameters))
         result (if (nil? user-id)
-                 (find-all (->InMemoryTodoDao))
-                 (find-by-user (->InMemoryTodoDao) user-id))
+                 (find-all (->InMemoryTodoDao todos))
+                 (find-by-user (->InMemoryTodoDao todos) user-id))
         response (response/response (to-response result))]
     (println "レスポンス => " response)
     (response/content-type response "application/json")))
@@ -39,7 +39,7 @@
   (let [request-body {:title (get-in req [:body "title"] "")
                       :user-id (get-in req [:body "user-id"] "")}
         body (to-request-body (:body req))
-        result (save (->InMemoryTodoDao) body)
+        result (save (->InMemoryTodoDao todos) body)
         response-body (from-todo result)
         response (response/response response-body)]
     (println str "リクエスト =>" request-body)

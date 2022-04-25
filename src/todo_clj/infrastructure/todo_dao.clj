@@ -1,5 +1,6 @@
 (ns todo-clj.infrastructure.todo-dao
   (:use [clojure.set :as set]
+        [clojure.string :refer [blank?]]
         [todo-clj.domain.todo]
         [todo-clj.domain.id]
         [todo-clj.domain.user]))
@@ -20,7 +21,7 @@
   (find-by-user [this user-id] "ユーザIDでTODOを絞る")
   (find-all [this] "すべてのTODOを返す"))
 
-(defrecord InMemoryTodoDao []
+(defrecord InMemoryTodoDao [todos]
   TodoDao
   (save [this todo]
     (let [id (create-id)
@@ -47,4 +48,7 @@
     ; IDが入力されてなければ空の結果
     (when (nil? user-id) #{})
     (println "ユーザID => " user-id)
-    (set/select (fn [todo] (= (:value (:id (:user todo))) 1)) todos)))
+    (set/select (fn [todo]
+                  (let [user-id-value (:value (:id (:user todo)))]
+                    (= user-id-value user-id)))
+                todos)))
